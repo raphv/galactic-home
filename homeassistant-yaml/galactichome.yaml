@@ -1,0 +1,66 @@
+- name: Galactic Icons
+  state: "{{this.attributes.keys()|length}} icons"
+  attributes:
+    cloudy:        "000e000000eeeee000eeeeeeee00eeeeee000000000000000c0c000cccccc00cccccccccccccccccc0ccccccc0000000000"
+    fog:           "000000000eee00eee00000000000eee00eee000000000eee00eee00000000000eee00eee000000000eee00eee0000000000"
+    lightning:     "000eee0000eeeeee00eeeeeeeee0eeeeeee0000000000000aaa000000aaa00000aaa000000aaa00000000aa00000000a000"
+    partlycloudy:  "0000044000000444400004444440004444440000444400000c4c000cccccc00cccccccccccccccccc0ccccccc0000000000"
+    rainy:         "000eee0000eeeeee00eeeeeeeee0eeeeeee0000000000003000300300030003003000300300030003003000300300030003"
+    snowy:         "000eee0000eeeeee00eeeeeeeee0eeeeeee0000000000000f000000f0f0f00000fff00000f0f0f000000f00000000000000"
+    sunny:         "000000000000040000040444040004444400044444440444444444044444440004444400040444040000040000000000000"
+    max_temp:      "000000110000000110000000770001000770011100dd0111110dd0000000dd0000000990000009999000003333000000330"
+    min_temp:      "000000110000000110000000770000000770000000dd0333330dd0033300dd0003000990000009999000003333000000330"
+    precipitation: "030000000030000000333000000333000030030000030000000333000300333000300030003330000003330000000300000"
+    outside_temp:  "000000110000000770000000770000000dd0000a0999900a0a99990a000a330aa000aa000a000a0000a000a0000aaaaa000"
+    inside_temp:   "0000a0000000a0a00000a011a000a00770a0aa00770aa0a00dd0a00a00dd0a00a09999a00a09999a00a00330a00aaaaaaa0"
+    solar_panels:  "000040000040444040004444400444444444334444400343444340333043300000000000333033300333033300333033300"
+    trashcan:      "000000000000888000888888888000000000088888880080808080080808080080808080080808080088888880000000000"
+    birthday:      "0000a0000000a40000000a4a0000000d0000000eee000000eee000044444440055555550044444440055555550044444440"
+    smiley-green:  "000000000000222000002222200022222220220222022222222222220222022022000220002222200000222000000000000"
+    smiley-yellow: "000000000000444000004444400044444440440444044444444444440000044044444440004444400000444000000000000"
+    smiley-red:    "000000000000111000001111100011111110110111011111111111111000111010111010001111100000111000000000000"
+- name: Galactic Home
+  state: "{{this.attributes.display|length}} lines"
+  attributes:
+    display: >-
+      {{ [ {
+        'text': {{as_timestamp(now())|timestamp_custom('%A')}},
+      }, {
+        'text': states('sensor.afvalwijzer_next_type') + ' ' + ['today', 'tomorrow'][states('sensor.afvalwijzer_next_in_days')|int] | default('in '+states('sensor.afvalwijzer_next_in_days')+' days'),
+        'icon': state_attr('sensor.galactic_icons','trashcan'),
+        'visible': states('sensor.afvalwijzer_next_in_days') | int < 3
+      }, {
+        'text': state_attr('calendar.birthdays','message'),
+        'icon': state_attr('sensor.galactic_icons','birthday'), 
+        'visible': states('calendar.birthdays') == 'on'
+      }, {
+        'text': states('sensor.inside_temperature', with_unit = True),
+        'icon': state_attr('sensor.galactic_icons', 'outside_temp'),
+      }, {
+        'text': states('sensor.outside_temperature', with_unit = True),
+        'icon': state_attr('sensor.galactic_icons', 'inside_temp'),
+      }, {
+        'text': states('sensor.carbon_dioxide_monitor', with_unit = True),
+        'icon': state_attr('sensor.galactic_icons',['smiley-green','smiley-yellow','smiley-red'][[800,1400]|select('lt',states('sensor.nettigo_air_monitor_mh_z14a_carbon_dioxide')|int)|list|count]),
+      }, {
+        'text': (states('sensor.envoy_current_power_production')|float|round(1)|string + 'kW'),
+        'icon': state_attr('sensor.galactic_icons', 'solar_panels'),
+        'visible': states('sensor.envoy_current_power_production')|float > 0.1,
+      }, {
+        'icon': state_attr('sensor.galactic_icons',state_attr('weather.openweathermap','forecast')[0].condition),
+        'text': ( as_timestamp(state_attr('weather.openweathermap','forecast')[0].datetime)|timestamp_custom('%H:%M') + ' '
+          + state_attr('weather.openweathermap','forecast')[0].temperature|int|string + '°C' ),
+      }, {
+        'icon': state_attr('sensor.galactic_icons',state_attr('weather.openweathermap','forecast')[1].condition),
+        'text': ( as_timestamp(state_attr('weather.openweathermap','forecast')[1].datetime)|timestamp_custom('%H:%M') + ' '
+          + state_attr('weather.openweathermap','forecast')[1].temperature|int|string + '°C' ),
+      }, {
+        'icon': state_attr('sensor.galactic_icons',state_attr('weather.openweathermap','forecast')[2].condition),
+        'text': ( as_timestamp(state_attr('weather.openweathermap','forecast')[2].datetime)|timestamp_custom('%H:%M') + ' '
+          + state_attr('weather.openweathermap','forecast')[2].temperature|int|string + '°C' ),
+      }, {
+        'icon': state_attr('sensor.galactic_icons',state_attr('weather.openweathermap','forecast')[3].condition),
+        'text': ( as_timestamp(state_attr('weather.openweathermap','forecast')[3].datetime)|timestamp_custom('%H:%M') + ' '
+          + state_attr('weather.openweathermap','forecast')[3].temperature|int|string + '°C' ),
+      } ] }}
+

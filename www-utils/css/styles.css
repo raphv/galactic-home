@@ -1,0 +1,51 @@
+body { background: black; color: white; font-family: sans-serif; }
+.c-0 { fill: #404040; background-color: #404040; }
+.c-1 { fill: #ff6060; background-color: #ff6060; }
+.c-2 { fill: #60ff60; background-color: #60ff60; }
+.c-3 { fill: #6060ff; background-color: #6060ff; }
+.c-4 { fill: #ffff60; background-color: #ffff60; }
+.c-5 { fill: #ff60ff; background-color: #ff60ff; }
+.c-6 { fill: #60ffff; background-color: #60ffff; }
+.c-7 { fill: #ffa0a0; background-color: #ffa0a0; }
+.c-8 { fill: #a0ffa0; background-color: #a0ffa0; }
+.c-9 { fill: #a0a0ff; background-color: #a0a0ff; }
+.c-a { fill: #ffffa0; background-color: #ffffa0; }
+.c-b { fill: #ffa0ff; background-color: #ffa0ff; }
+.c-c { fill: #a0ffff; background-color: #a0ffff; }
+.c-d { fill: #808080; background-color: #808080; }
+.c-e { fill: #cccccc; background-color: #cccccc; }
+.c-f { fill: #ffffff; background-color: #ffffff; }
+button { cursor: pointer }
+#wrapper {
+    position: relative; display: block; margin: 1em auto; width: 180px; height: 220px;
+    line-height: 0; font-size: 0;
+}
+#icon-image {
+    display: flex; flex-wrap: wrap; width: 180px; height: 220px;
+}
+#icon-image button {
+    box-sizing: border-box; width: 20px; height: 20px; margin: 0;
+    border-radius: 8px; padding: 0; border: 1px solid #000;
+}
+#icon-text {
+    display: block; margin: 1em auto; width: 90%; font-family: monospace;
+}
+#copy-button {
+    display: block; margin: 1em auto; padding: .5em 2em; border: none; border-radius: 5px;
+    background: #009; color: #fff; font-weight: bold; font-size: 1.1em;
+}
+#colour-selector {
+    position: absolute; display: none; flex-wrap: wrap;
+    width: 100px; height: 100px; background: #808080; border: 1px solid #ccc;
+    border-radius: 0 10px 10px 10px;
+}
+#colour-selector button {
+    box-sizing: border-box; width: 25px; height: 25px; margin: 0;
+    border-radius: 8px; padding: 0; border: 1px solid #000;
+}
+#examples {
+    margin: 1em; display: flex; flex-wrap: wrap; justify-content: space-around;
+}
+#examples svg {
+    margin: 1em;
+}
