@@ -6,55 +6,18 @@
     <title>Galactic Home Display Simulator</title>
     <link rel="stylesheet" href="css/styles.css">
     <style>
-      #test {
-        display: flex; flex-direction: row;
-      }
-      .column {
-        display: flex; flex-direction: column;
-      }
-      .dot {
-        width: 1rem; height: 1rem; border-radius: .5rem;
-      }
-      .c-1 {
-        background-color: #fff;
-      }
-      .c-0 {
-        background-color: #222;
-      }
     </style>
    </head>
    <body>
-    <div id="test"></div>
+    <img id="test">
+    <h2>Displayed Icon</h2>
+    <div id="examples"></div>
+    <h2>Displayed Text</h2>
+    <input id="display-text" value="Hello">
     <script src="js/font8.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/display-simulation.js"></script>
     <script>
-      function getLetter(letter) {
-        if (letter in characters) return (
-          characters[letter].map(column => column << 2)
-        );
-        if (letter in accented_characters) {
-          let acc_char = accented_characters[letter],
-              base_letter = getLetter(acc_char[0]),
-              accent = accents[acc_char[1]],
-              shift = accent[acc_char[2]];
-          return base_letter.map( (letter_col, i) => {
-            let shifted_accent_col = (accent[i+2]) << (shift - 5);
-            return (letter_col | shifted_accent_col);
-          });
-        }
-        return getLetter('?');
-      }
-      function columnToDiv(column) {
-        return '<div class="column">' + Array.from(Array(11)).map((e, i) => {
-          let dot = (column >> i) & 1;
-          return `<div class="dot c-${dot}"></div>`
-        }).join('') + '</div>';
-      }
-      function textToDiv(text) {
-        let columns = Array.from(text).reduce((prev, letter) => {
-          return prev.concat(getLetter(letter),[0])
-        },[]);
-        document.getElementById('test').innerHTML = columns.map(columnToDiv).join('');
-      }
     </script>
    </body>
 </html>

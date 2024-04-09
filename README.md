@@ -1,5 +1,7 @@
 # Galactic Home
 
+![A simulation of the Galactic Home Display](example.svg)
+
 ### Displaying data from Home Assistant on the Pimoroni Galactic Unicorn
 
 ## Part 1: YAML Configuration Files
@@ -33,4 +35,5 @@ Additional files (batteries not included, sorry!) are needed to make it work:
 
 ## Part 3: Web-based utilities
 
-...
+ * `icon-maker.html`: A tool to create icon codes for the `galactichome.yaml`
+ * `display-simulator.html`: A tool to try out how the display would look like and export it as SVG.
