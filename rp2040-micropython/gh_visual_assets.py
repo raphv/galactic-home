@@ -20,7 +20,7 @@ BASE_COLORS = (
    ( 0xff, 0xff, 0xa0 ), # a = YELLOW-ISH
    ( 0xff, 0xa0, 0xff ), # b = MAGENTA-ISH
    ( 0xa0, 0xff, 0xff ), # c = CYAN-ISH
-   ( 0x80, 0x80, 0x80 ), # d = GRAY
+   ( 0xff, 0xa0, 0x80 ), # d = ORANGE
    ( 0xcc, 0xcc, 0xcc ), # e = OFF-WHITE
    ( 0xff, 0xff, 0xff ), # f = WHITE
 )
@@ -51,7 +51,7 @@ HTML_HOME = """<!doctype html>
    .c-a { fill: #ffffa0 }
    .c-b { fill: #ffa0ff }
    .c-c { fill: #a0ffff }
-   .c-d { fill: #808080 }
+   .c-d { fill: #ffa080 }
    .c-e { fill: #cccccc }
    .c-f { fill: #ffffff }
    button { font-size: 1.5em; display: block; margin: 1em auto; color: inherit; background: #000080; border: none; border-radius: 1em; padding: .5em 5em; }
