@@ -34,9 +34,12 @@ ringing = False
 all_lines = []
 error_log = []
 
+def exception_to_message(exc):
+    return '%s on line %d'%(exc, exc.__traceback__.tb_lineno)
+
 def log_error(*messages):
     year, month, day, hour, minute,second, _, _ = time.localtime(time.time() + tz_offset)
-    full_message = ' '.join((str(m) for m in messages))
+    full_message = ' '.join(messages)
     if len(error_log) > 15:
         del error_log[0]
     error_log.append('[%04d-%02d-%02d %02d:%02d:%02d] %s'%(year, month, day, hour, minute,second,full_message))
@@ -55,15 +58,6 @@ def draw_digit(i, offset_x, offset_y):
                     graphics.pixel(xpos, ypos)
                 line = (line >> 1)
     
-def draw_number(num, offset_x, offset_y, from_right=False):
-    numstr = str(num)
-    x = offset_x
-    if from_right:
-        x = x + 1 - 4*len(numstr)
-    for digit in numstr:
-        draw_digit(int(digit), x, offset_y)
-        x += 4
-
 @micropython.native
 def draw_icon(icon, offset_x, offset_y):
     for y in range(ICON_HEIGHT):
@@ -136,7 +130,7 @@ async def server_callback(reader, writer):
         writer.write(response)
         await writer.drain()
     except Exception as e:
-        log_error("[Web server] Error while responding to request", ' '.join(request_info), e)
+        log_error("[Web server] Error while responding to request", ' '.join(request_info), exception_to_message(e))
     finally:
         writer.close()
         reader.close()
@@ -176,7 +170,7 @@ async def get_time():
         resp = await reader.read()
         json_data = resp.decode().split('\r\n')[-1]
         time_data = json.loads(json_data)
-        tz_offset = time_data["raw_offset"]
+        tz_offset = time_data.get("raw_offset",0) + time_data.get("dst_offset",0)
         utc_str = time_data["utc_datetime"]
         time_tuple = tuple(
             int(utc_str[a:b])
@@ -228,10 +222,12 @@ async def get_ha_data():
         await writer.drain()
         resp = await reader.read()
         json_data = json.loads(resp.decode().split('\r\n')[-1])
-        all_lines = json_data['attributes']['display']
+        all_lines = json_data['attributes']['display'] or []
+        if not all_lines:
+            log_error("Home Assistant returned empty data")
         print('Updated ', json_data['state'])
     except Exception as e:
-        log_error("[Home Assistant] Error while fetching data", e)
+        log_error("[Home Assistant] Error while fetching data", exception_to_message(e))
     finally:
         reader.close()
         writer.close()
@@ -252,27 +248,30 @@ async def text_loop():
     global text_to_display
     current_line_index = -1
     while True:
-        visible_lines = [s for s in all_lines if s.get('visible',True)]
-        display_time = CONFIG.LINE_DISPLAY_TIME
-        if visible_lines:
-            current_line_index = (1 + current_line_index) % len(visible_lines)
-            current_line = visible_lines[current_line_index]
-            text = current_line.get('text', '(Error)')
-            text_width = graphics.measure_text(text, scale = .5)
-            display_time = max(display_time, text_width * CONFIG.GRAPHICS_REFRESH_TIME )
-            text_to_display = [
-                text, # 0 = text
-                text_width, # 1 = full width
-                0, # 2 = current scroll
-                -1, # 3 = scroll direction
-                5, # 4 = countdown
-                current_line.get('icon',None), # 5 = icon
-            ]
-            print("Showing '%s' for %.2fs"%(text,display_time/1000))
-        else:
-            text_to_display = None
-            display_time = 500
-        del visible_lines
+        try:
+            visible_lines = [s for s in all_lines if s.get('visible',True)]
+            display_time = CONFIG.LINE_DISPLAY_TIME
+            if visible_lines:
+                current_line_index = (1 + current_line_index) % len(visible_lines)
+                current_line = visible_lines[current_line_index]
+                text = current_line.get('text', '')
+                text_width = graphics.measure_text(text, scale = .5)
+                display_time = max(display_time, int(1.1 * text_width * CONFIG.GRAPHICS_REFRESH_TIME) )
+                text_to_display = [
+                    text, # 0 = text
+                    text_width, # 1 = full width
+                    0, # 2 = current scroll
+                    -1, # 3 = scroll direction
+                    5, # 4 = countdown
+                    current_line.get('icon',None), # 5 = icon
+                ]
+                print("Showing '%s' for %.2fs"%(text,display_time/1000))
+            else:
+                text_to_display = None
+                display_time = 500
+            del visible_lines
+        except Exception as e:
+            log_error("[Text processing loop]", exception_to_message(e))    
         await uasyncio.sleep_ms(display_time)
         
 async def display_loop():
@@ -313,11 +312,15 @@ async def display_loop():
                 draw_icon(text_to_display[5], ICON_LEFT, 0)
                 
         graphics.set_pen(PENS[9])
-        draw_number('{:02}'.format(day),0,0)
-        draw_number('{:02}'.format(month),10,0)
+        draw_digit(day//10,0,0)
+        draw_digit(day%10,4,0)
+        draw_digit(month//10,10,0)
+        draw_digit(month%10,14,0)
         graphics.set_pen(PENS[10])
-        draw_number('{:02}'.format(hour),0,6)
-        draw_number('{:02}'.format(minute),10,6)
+        draw_digit(hour//10,0,6)
+        draw_digit(hour%10,4,6)
+        draw_digit(minute//10,10,6)
+        draw_digit(minute%10,14,6)
         graphics.set_pen(WHITE)
         if parity:
             graphics.pixel(8,7)
