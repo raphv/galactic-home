@@ -9,11 +9,13 @@ How the setup works:
  * Thanks to the Home Assistant [REST API](https://developers.home-assistant.io/docs/api/rest/), this data can be accessed through a single HTTP GET request from http://homeassistant.local:8123/api/states/sensor.galactic_home
  * The Micropython scripts installed on the Galactic Unicorn take this data and display information about your house, the weather, etc.
 
+*Tip: This requires some experience with Home Assistant. I've tried to put links to the Home Assistant documentation where I deemed it necessary*
+
 ## Part 1: YAML Configuration Files
 
 This folder contains 2 files:
- * `configuration.yaml` which contains the lines to be added to the main
- * `template.yaml` which contains the display logic to show text and icons on the Galactic Unicorn
+ * `configuration.yaml` which contains the lines to be added to the main Home Assistant configuration.
+ * `template.yaml` which contains the display logic to show text and icons on the Galactic Unicorn.
 
 In order to change the configuration of the Galactic Unicorn display without the need for a USB cable, the contents of the display are configured in a YAML file in Home Assistant as a [template sensor](https://www.home-assistant.io/docs/configuration/templating/)
 
@@ -33,7 +35,7 @@ The configuration provided is an example that displays:
  * Data from Air Quality sensors, with different colours based on different thresholds
  * Three forecasts from [OpenWeatherMap](https://www.home-assistant.io/integrations/openweathermap/)
 
-In order to use the **doorbell** function, you can add it to an automation or script, and trigger the REST command defined in `configuration.yaml`
+In order to use the **doorbell** function, you can add it to an automation or script, and trigger the [RESTful command](https://www.home-assistant.io/integrations/rest_command/) defined in `configuration.yaml`
 
 ## Part 2: Micropython files for the Galactic Unicorn
 
@@ -52,6 +54,6 @@ Additional files (batteries not included, sorry!) are needed to make it work:
  * `icon-maker.html`: A tool to create icon codes for the `galactichome.yaml`
  * `display-simulator.html`: A tool to try out how the display would look like and export it as SVG.
 
-## To-do list
+## To-do list/Future features
 
  * Use it as an alarm (similar to the door bell, but using Pimoroni's synthesizer functions)
