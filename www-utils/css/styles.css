@@ -12,7 +12,7 @@ body { background: black; color: white; font-family: sans-serif; }
 .c-a { fill: #ffffa0; background-color: #ffffa0; }
 .c-b { fill: #ffa0ff; background-color: #ffa0ff; }
 .c-c { fill: #a0ffff; background-color: #a0ffff; }
-.c-d { fill: #808080; background-color: #808080; }
+.c-d { fill: #ffa060; background-color: #ffa060; }
 .c-e { fill: #cccccc; background-color: #cccccc; }
 .c-f { fill: #ffffff; background-color: #ffffff; }
 button { cursor: pointer }
