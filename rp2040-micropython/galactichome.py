@@ -35,7 +35,7 @@ all_lines = []
 error_log = []
 
 def exception_to_message(exc):
-    return '%s on line %d'%(exc, exc.__traceback__.tb_lineno)
+    return '%s: %s'%(exc.__class__.__name__, exc)
 
 def log_error(*messages):
     year, month, day, hour, minute,second, _, _ = time.localtime(time.time() + tz_offset)
@@ -130,7 +130,11 @@ async def server_callback(reader, writer):
         writer.write(response)
         await writer.drain()
     except Exception as e:
-        log_error("[Web server] Error while responding to request", ' '.join(request_info), exception_to_message(e))
+        log_error(
+            "[Web server] Error while responding to request",
+            ' '.join(request_info),
+            exception_to_message(e)
+        )
     finally:
         writer.close()
         reader.close()
@@ -183,7 +187,9 @@ async def get_time():
         last_time_update = time.ticks_ms()
         print('UTC time is %s'%(utc_str[:19]))
     except Exception as e:
-        log_error("[Get Time] Error", e)
+        log_error(
+            "[Get Time] Error", exception_to_message(e)
+        )
     finally:
         reader.close()
         writer.close()
@@ -227,7 +233,10 @@ async def get_ha_data():
             log_error("Home Assistant returned empty data")
         print('Updated ', json_data['state'])
     except Exception as e:
-        log_error("[Home Assistant] Error while fetching data", exception_to_message(e))
+        log_error(
+            "[Home Assistant] Error while fetching data",
+            exception_to_message(e)
+        )
     finally:
         reader.close()
         writer.close()
@@ -271,7 +280,10 @@ async def text_loop():
                 display_time = 500
             del visible_lines
         except Exception as e:
-            log_error("[Text processing loop]", exception_to_message(e))    
+            log_error(
+                "[Text processing loop]",
+                exception_to_message(e)
+                )    
         await uasyncio.sleep_ms(display_time)
         
 async def display_loop():
