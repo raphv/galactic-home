@@ -61,3 +61,13 @@ document.getElementById('copy-button').addEventListener('click', e => {
     icontextinput.select();
     document.execCommand('copy');
 });
+
+document.getElementById('mirror-v-button').addEventListener('click', e => { 
+    icontextinput.value = [...icontextinput.value.matchAll(/\w{9}/g)].reverse().join('');
+    updateInput();
+});
+
+document.getElementById('mirror-h-button').addEventListener('click', e => { 
+    icontextinput.value = [...icontextinput.value.matchAll(/\w{9}/g)].map(l => l[0].split('').reverse().join('')).join('');
+    updateInput();
+});
